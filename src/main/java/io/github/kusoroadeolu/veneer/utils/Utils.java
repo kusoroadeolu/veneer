@@ -12,7 +12,6 @@ import java.util.function.BiConsumer;
 
 public class Utils {
 
-
     private Utils(){
     }
 
