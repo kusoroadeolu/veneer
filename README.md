@@ -16,7 +16,7 @@ Syntax highlighting for Java, Python, Go, Lua, and JavaScript via ANSI color cod
 <dependency>
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>veneer</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
