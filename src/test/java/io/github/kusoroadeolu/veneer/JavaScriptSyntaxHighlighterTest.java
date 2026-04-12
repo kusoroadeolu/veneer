@@ -2,7 +2,7 @@ package io.github.kusoroadeolu.veneer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.clique.parser.MarkupParser;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class JavaScriptSyntaxHighlighterTest {
     void highlight_keywords_shouldBeStyled() {
         String snippet = "const x = 1;";
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -33,7 +33,7 @@ class JavaScriptSyntaxHighlighterTest {
             const msg = "hello";
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -42,7 +42,7 @@ class JavaScriptSyntaxHighlighterTest {
             const msg = `hello world`;
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -55,7 +55,7 @@ class JavaScriptSyntaxHighlighterTest {
             const e = 100n;
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().ansiSequence()));
     }
 
     @Test
@@ -66,7 +66,7 @@ class JavaScriptSyntaxHighlighterTest {
                line */
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
@@ -85,7 +85,7 @@ class JavaScriptSyntaxHighlighterTest {
             const c = 3;
             """;
         var lineHighlighter = new JavaScriptSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
@@ -101,7 +101,7 @@ class JavaScriptSyntaxHighlighterTest {
             const x = 1;
             """;
         var lineHighlighter = new JavaScriptSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));

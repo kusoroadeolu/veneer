@@ -29,7 +29,7 @@ public class LuaSyntaxHighlighter extends AbstractSyntaxHighlighter{
         var tokenStream = Utils.toTokenStream(lexer);
         if (showLineNumbers) applyWithLines(sb, tokenStream);
         else applyWithoutLines(sb, tokenStream);
-        return sb.get();
+        return sb.toString();
     }
 
 
@@ -41,14 +41,14 @@ public class LuaSyntaxHighlighter extends AbstractSyntaxHighlighter{
 
     public void applyWithLines(StyleBuilder sb, BufferedTokenStream tokenStream){
         int[] lineNumber = new int[1];
-        sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+        sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
 
         for (Token token : tokenStream.getTokens()){
             if (isMultiLineToken(token)){
                 styleMultiLineToken(token, lineNumber, sb, theme.gutter(), this::applyStyles);
             }else if (token.getType() == NL){
                 applyStyles(token, sb);
-                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+                sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
             }else applyStyles(token, sb);
         }
     }
@@ -56,15 +56,15 @@ public class LuaSyntaxHighlighter extends AbstractSyntaxHighlighter{
 
     void applyStyles(Token token, StyleBuilder sb){
         if (isKeyword(token)){
-            sb.append(token.getText(), theme.keyword());
+            sb.appendAndReset(token.getText(), theme.keyword());
         }else if (isStringLiteral(token)){
-            sb.append(token.getText(), theme.stringLiteral());
+            sb.appendAndReset(token.getText(), theme.stringLiteral());
         } else if (isNumberLiteral(token)) {
-            sb.append(token.getText(), theme.numberLiteral());
+            sb.appendAndReset(token.getText(), theme.numberLiteral());
         }else if (isComment(token)) {
-            sb.append(token.getText(), theme.comment());
+            sb.appendAndReset(token.getText(), theme.comment());
         } else if (!isEOF(token)) {
-            sb.append(token.getText());
+            sb.appendAndReset(token.getText());
         }
     }
 

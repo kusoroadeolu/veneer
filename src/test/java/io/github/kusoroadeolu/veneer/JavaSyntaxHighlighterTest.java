@@ -1,7 +1,7 @@
 package io.github.kusoroadeolu.veneer;
 
-import io.github.kusoroadeolu.clique.ansi.StyleCode;
-import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.clique.parser.MarkupParser;
+import io.github.kusoroadeolu.clique.style.StyleCode;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,9 +30,9 @@ class JavaSyntaxHighlighterTest {
             """;
         String styled = highlighter.highlight(codeSnippet);
         List<String> list = styled.lines().toList();
-        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.annotation().toString()));
-        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
-        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.annotation().ansiSequence()));
+        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
+        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -42,7 +42,7 @@ class JavaSyntaxHighlighterTest {
             Some garbage
             """;
         String styled = highlighter.highlight(codeSnippet);
-        styled = styled.replace(StyleCode.RESET.toString(), ""); //Replace all the resets, since resets will be initially applied here
+        styled = styled.replace(StyleCode.RESET.ansiSequence(), ""); //Replace all the resets, since resets will be initially applied here
         assertEquals(codeSnippet, styled);
     }
 
@@ -57,8 +57,8 @@ class JavaSyntaxHighlighterTest {
         String styled = highlighter.highlight(codeSnippet);
         List<String> list = styled.lines().toList();
         //This wont render the method name correctly
-        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.keyword().toString()));
-        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(list.getFirst().contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
+        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -70,7 +70,7 @@ class JavaSyntaxHighlighterTest {
             """;
         var highlighter1 = new JavaSyntaxHighlighter();
         String styled = highlighter1.highlight(codeSnippet);
-        styled = AnsiStringParser.DEFAULT.getOriginalString(styled); //Strip ansi codes to prevent false positives
+        styled = MarkupParser.DEFAULT.getOriginalString(styled); //Strip ansi codes to prevent false positives
         List<String> list = styled.lines().toList();
         assertTrue(list.getFirst().contains("1"));
         assertTrue(list.get(1).contains("2"));
@@ -88,7 +88,7 @@ class JavaSyntaxHighlighterTest {
         var highlighter1 = new JavaSyntaxHighlighter();
         String styled = highlighter1.highlight(codeSnippet);
         List<String> list = styled.lines().toList();
-        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(list.get(1).contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test

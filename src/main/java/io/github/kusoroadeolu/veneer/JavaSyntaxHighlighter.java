@@ -19,7 +19,7 @@ import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import java.util.*;
 
 import static com.github.javaparser.GeneratedJavaParserConstants.*;
-import static io.github.kusoroadeolu.clique.core.utils.Constants.NEWLINE;
+import static io.github.kusoroadeolu.veneer.utils.Constants.NEWLINE;
 import static io.github.kusoroadeolu.veneer.utils.Utils.formatNoTo3dp;
 import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
 
@@ -75,7 +75,7 @@ public class JavaSyntaxHighlighter extends AbstractSyntaxHighlighter{
         if (showLineNumbers) styleWithLines(sb, tokenRange, bundle);
         else styleWithoutLines(sb, tokenRange, bundle);
 
-        return sb.get();
+        return sb.toString();
     }
 
 
@@ -104,30 +104,30 @@ public class JavaSyntaxHighlighter extends AbstractSyntaxHighlighter{
 
     void applyStyle(JavaToken token, StyleBuilder sb, AstBundle astBundle){
         if (token.getCategory().isWhitespaceButNotEndOfLine()) {
-            sb.append(token.getText());
+            sb.appendAndReset(token.getText());
             return;
         }
 
         String text = token.getText();
         if(isConstant(token, astBundle.constants())){
-            sb.append(text, theme.constants());
+            sb.appendAndReset(text, theme.constants());
         }else if (isStringOrJavadoc(token)){
-            sb.append(text, theme.stringLiteral());
+            sb.appendAndReset(text, theme.stringLiteral());
         } else if (isNumberLiteral(token)) {
-            sb.append(text, theme.numberLiteral());
+            sb.appendAndReset(text, theme.numberLiteral());
         }else if (isComment(token)){
-            sb.append(text, theme.comment());
+            sb.appendAndReset(text, theme.comment());
         }else if(isEOL(token)){
-            sb.append(text);
+            sb.appendAndReset(text);
         } else if (isAnnotation(token)) {
-            sb.append(text, theme.annotation());
+            sb.appendAndReset(text, theme.annotation());
         }else if(isTypeToken(token, astBundle.typeTokens())) {
-                sb.append(text, theme.types());
+                sb.appendAndReset(text, theme.types());
         }else if(isMethodOrConstructorIdentifier(token, astBundle.methodNames())) {
-            sb.append(text, theme.method());
+            sb.appendAndReset(text, theme.method());
         }else if (isKeyword(token) || isUnicodeEscape(token)) { //Moved this to the bottom to prevent "var" from clashing with valid identifiers
-                sb.append(text, theme.keyword());
-        }else sb.append(text);
+                sb.appendAndReset(text, theme.keyword());
+        }else sb.appendAndReset(text);
     }
 
     void styleMultiLineContent(JavaToken token, int[] lineNo, StyleBuilder sb, AstBundle astBundle){
@@ -143,7 +143,7 @@ public class JavaSyntaxHighlighter extends AbstractSyntaxHighlighter{
             if (i == 0 && startsOnNewLine(token)) {
                 appendLineNo(++lineNo[0], sb);
             } else if (i > 0) {
-                sb.append(NEWLINE);
+                sb.appendAndReset(NEWLINE);
                 appendLineNo(++lineNo[0], sb);
             }
 
@@ -237,7 +237,7 @@ public class JavaSyntaxHighlighter extends AbstractSyntaxHighlighter{
     }
 
     void appendLineNo(int lineNo, StyleBuilder sb){
-        sb.append(formatNoTo3dp(lineNo), theme.gutter());
+        sb.appendAndReset(formatNoTo3dp(lineNo), theme.gutter());
     }
 
     boolean isMethodOrConstructorIdentifier(JavaToken token, Set<PositionalJavaToken> methodTokens){

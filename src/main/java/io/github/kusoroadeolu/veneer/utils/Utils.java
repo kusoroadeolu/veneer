@@ -1,6 +1,5 @@
 package io.github.kusoroadeolu.veneer.utils;
 
-import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.spi.AnsiCode;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -35,8 +34,8 @@ public class Utils {
         List<String> lines = token.getText().lines().toList();
         for (int i = 0; i < lines.size(); i++) {
             if (i > 0) {
-                sb.append(Constants.NEWLINE);
-                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), gutter);
+                sb.appendAndReset(Constants.NEWLINE);
+                sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), gutter);
             }
             applyStyle.accept(new FragmentToken(token, lines.get(i)), sb);
         }
@@ -47,8 +46,8 @@ public class Utils {
         List<String> lines = token.getText().lines().toList();
         for (int i = 0; i < lines.size(); i++) {
             if (i > 0) {
-                sb.append(Constants.NEWLINE);
-                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), gutter);
+                sb.appendAndReset(Constants.NEWLINE);
+                sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), gutter);
             }
             applyStyle.accept(new FragmentToken(token, lines.get(i)), sb, prev);
         }

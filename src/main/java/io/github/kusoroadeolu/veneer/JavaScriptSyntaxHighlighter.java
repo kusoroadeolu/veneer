@@ -29,15 +29,15 @@ public class JavaScriptSyntaxHighlighter extends AbstractSyntaxHighlighter{
         Token prev = null;
 
         if (showLineNumbers) {
-            sb.append(Utils.formatNoTo3dp(lineNumber[0]), theme.gutter());
+            sb.appendAndReset(Utils.formatNoTo3dp(lineNumber[0]), theme.gutter());
         }
 
         for (Token token : tokenStream.getTokens()) {
             if (showLineNumbers && isMultiLineToken(token)) {
                 styleMultiLineToken(token, lineNumber, sb, theme.gutter(), prev ,this::applyStyles);
             } else if (showLineNumbers && isLineTerminator(token)) {
-                sb.append(token.getText());
-                sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+                sb.appendAndReset(token.getText());
+                sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
             } else {
                 applyStyles(token, sb, prev);
             }
@@ -49,26 +49,26 @@ public class JavaScriptSyntaxHighlighter extends AbstractSyntaxHighlighter{
 
 
 
-        return sb.get();
+        return sb.toString();
     }
 
 
 
     void applyStyles(Token token, StyleBuilder sb, Token prev){
         if (isKeyword(token)){
-            sb.append(token.getText(), theme.keyword());
+            sb.appendAndReset(token.getText(), theme.keyword());
         }else if (isStringLiteral(token)){
-            sb.append(token.getText(), theme.stringLiteral());
+            sb.appendAndReset(token.getText(), theme.stringLiteral());
         } else if (isNumberLiteral(token)) {
-            sb.append(token.getText(), theme.numberLiteral());
+            sb.appendAndReset(token.getText(), theme.numberLiteral());
         }else if (isComment(token)) {
-            sb.append(token.getText(), theme.comment());
+            sb.appendAndReset(token.getText(), theme.comment());
         }else if(isFunctionName(token, prev)){
-                sb.append(token.getText(), theme.method());
+                sb.appendAndReset(token.getText(), theme.method());
         }else if(isConstant(token)) {
-            sb.append(token.getText(), theme.constants());
+            sb.appendAndReset(token.getText(), theme.constants());
         }else if (!isEOF(token)) {
-            sb.append(token.getText());
+            sb.appendAndReset(token.getText());
         }
     }
 

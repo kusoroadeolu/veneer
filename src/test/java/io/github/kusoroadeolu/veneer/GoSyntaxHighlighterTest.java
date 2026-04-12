@@ -1,6 +1,6 @@
 package io.github.kusoroadeolu.veneer;
 
-import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.clique.parser.MarkupParser;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,8 @@ class GoSyntaxHighlighterTest {
             }
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        System.out.println(styled);
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -34,7 +35,7 @@ class GoSyntaxHighlighterTest {
             var msg = "hello world"
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -43,7 +44,7 @@ class GoSyntaxHighlighterTest {
             var msg = `hello world`
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -57,7 +58,7 @@ class GoSyntaxHighlighterTest {
             var f = 1i
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().ansiSequence()));
     }
 
     @Test
@@ -66,7 +67,7 @@ class GoSyntaxHighlighterTest {
             // this is a comment
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
@@ -77,13 +78,13 @@ class GoSyntaxHighlighterTest {
                comment */
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
     void highlight_nullOrBlank_shouldReturnEmpty() {
         String s = null;
-        assertTrue(highlighter.highlight(s).isEmpty());
+        assertTrue(highlighter.highlight((String) null).isEmpty());
         assertTrue(highlighter.highlight("").isEmpty());
         assertTrue(highlighter.highlight("   ").isEmpty());
     }
@@ -96,7 +97,7 @@ class GoSyntaxHighlighterTest {
             var c = 3
             """;
         var lineHighlighter = new GoSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
@@ -112,14 +113,14 @@ class GoSyntaxHighlighterTest {
             var x = 1
             """;
         var lineHighlighter = new GoSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
         assertTrue(lines.get(2).contains("3"));
         assertTrue(lines.get(3).contains("4"));
         // ensure the raw string content is still styled
-        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -131,13 +132,13 @@ class GoSyntaxHighlighterTest {
             var x = 1
             """;
         var lineHighlighter = new GoSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
         assertTrue(lines.get(2).contains("3"));
         assertTrue(lines.get(3).contains("4"));
         // ensure the comment content is still styled
-        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 }

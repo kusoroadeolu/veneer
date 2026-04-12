@@ -1,6 +1,6 @@
 package io.github.kusoroadeolu.veneer;
 
-import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.clique.parser.MarkupParser;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class PythonSyntaxHighlighterTest {
                 return "hello"
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -33,7 +33,7 @@ class PythonSyntaxHighlighterTest {
             msg = "hello world"
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -43,7 +43,7 @@ class PythonSyntaxHighlighterTest {
             msg = f"hello {name}"
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -56,7 +56,7 @@ class PythonSyntaxHighlighterTest {
             e = 0o77
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().ansiSequence()));
     }
 
     @Test
@@ -65,7 +65,7 @@ class PythonSyntaxHighlighterTest {
             # this is a comment
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
@@ -76,7 +76,7 @@ class PythonSyntaxHighlighterTest {
                 pass
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.annotation().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.annotation().ansiSequence()));
     }
 
     @Test
@@ -94,7 +94,7 @@ class PythonSyntaxHighlighterTest {
             c = 3
             """;
         var lineHighlighter = new PythonSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));

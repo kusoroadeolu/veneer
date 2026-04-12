@@ -7,20 +7,20 @@ abstract class AbstractSyntaxHighlighter implements SyntaxHighlighter{
     final SyntaxTheme theme;
     final boolean showLineNumbers;
 
-    public AbstractSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
+    AbstractSyntaxHighlighter(SyntaxTheme theme, boolean showLineNumbers) {
         this.theme = theme;
         this.showLineNumbers = showLineNumbers;
     }
 
-    public AbstractSyntaxHighlighter(){
+    AbstractSyntaxHighlighter(){
         this(true);
     }
 
-    public AbstractSyntaxHighlighter(boolean showLineNumbers){
+    AbstractSyntaxHighlighter(boolean showLineNumbers){
         this(SyntaxThemes.DEFAULT, showLineNumbers);
     }
 
-    public AbstractSyntaxHighlighter(SyntaxTheme theme){
+    AbstractSyntaxHighlighter(SyntaxTheme theme){
         this(theme, false);
     }
 }

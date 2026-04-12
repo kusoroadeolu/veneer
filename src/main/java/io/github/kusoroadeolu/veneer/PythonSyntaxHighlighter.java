@@ -1,9 +1,9 @@
 package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
+import io.github.kusoroadeolu.veneer.utils.Constants;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
@@ -32,14 +32,14 @@ public class PythonSyntaxHighlighter extends AbstractSyntaxHighlighter {
         var tokens = tokenStream.getTokens();
 
         int[] lineNumber = new int[1];
-        sb.append(formatNoTo3dp(++lineNumber[0]), theme.gutter());
+        sb.appendAndReset(formatNoTo3dp(++lineNumber[0]), theme.gutter());
 
         Token prev = null;
 
         for (Token token : tokens) {
             if (token.getType() == PythonLexer.NEWLINE && showLineNumbers) {
-                sb.append(Constants.NEWLINE);
-                sb.append(formatNoTo3dp(++lineNumber[0]), theme.gutter());
+                sb.appendAndReset(Constants.NEWLINE);
+                sb.appendAndReset(formatNoTo3dp(++lineNumber[0]), theme.gutter());
             } else if (isMultiLineToken(token)) {
                 styleMultiLineToken(token, lineNumber, sb, theme.gutter(), prev ,this::applyStyles);
             } else {
@@ -50,7 +50,7 @@ public class PythonSyntaxHighlighter extends AbstractSyntaxHighlighter {
                 prev = token;
             }
         }
-        return sb.get();
+        return sb.toString();
     }
 
 
@@ -62,26 +62,26 @@ public class PythonSyntaxHighlighter extends AbstractSyntaxHighlighter {
 
         String text = token.getText();
         if (isComment(token)) {
-            sb.append(text, theme.comment());
+            sb.appendAndReset(text, theme.comment());
         } else if (isString(token)) {
-            sb.append(text, theme.stringLiteral());
+            sb.appendAndReset(text, theme.stringLiteral());
         } else if (isNumber(token)) {
-            sb.append(text, theme.numberLiteral());
+            sb.appendAndReset(text, theme.numberLiteral());
         } else if (isAnnotation(token)) {
-            sb.append(text, theme.annotation());
+            sb.appendAndReset(text, theme.annotation());
         } else if (isFunctionName(token, prev)) {
-            sb.append(text, theme.method());
+            sb.appendAndReset(text, theme.method());
         } else if (isConstant(token)) {
-            sb.append(text, theme.constants());
+            sb.appendAndReset(text, theme.constants());
          } else if (isArrow(token)) {
-            sb.append(text, theme.annotation());
+            sb.appendAndReset(text, theme.annotation());
         } else if (isReturnType(token, prev)) {
-            if (isKeyword(text)) sb.append(text, theme.keyword());
-            else sb.append(text, theme.types());
+            if (isKeyword(text)) sb.appendAndReset(text, theme.keyword());
+            else sb.appendAndReset(text, theme.types());
         } else if (isKeyword(token)) {
-            sb.append(text, theme.keyword());
+            sb.appendAndReset(text, theme.keyword());
         } else {
-            sb.append(text);
+            sb.appendAndReset(text);
         }
     }
 

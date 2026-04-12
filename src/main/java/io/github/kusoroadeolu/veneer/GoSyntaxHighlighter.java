@@ -1,15 +1,16 @@
 package io.github.kusoroadeolu.veneer;
 
 import io.github.kusoroadeolu.clique.Clique;
-import io.github.kusoroadeolu.clique.core.utils.Constants;
 import io.github.kusoroadeolu.clique.style.StyleBuilder;
 import io.github.kusoroadeolu.veneer.theme.SyntaxTheme;
+import io.github.kusoroadeolu.veneer.utils.Constants;
 import io.github.kusoroadeolu.veneer.utils.Utils;
 import org.antlr.v4.runtime.*;
 
 import java.util.List;
 import io.github.kusoroadeolu.veneer.GoLexer;
 
+import static io.github.kusoroadeolu.veneer.utils.Constants.NEWLINE;
 import static io.github.kusoroadeolu.veneer.utils.Utils.*;
 
 public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
@@ -39,7 +40,7 @@ public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
         int[] lineNumber = new int[1];
 
         if (showLineNumbers) {
-            sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+            sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
         }
 
         for (int i = 0; i < size; i++) {
@@ -50,15 +51,15 @@ public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
                 String text = token.getText();
                 long newlineCount = text.chars().filter(c -> c == '\n').count();
                 for (int j = 0; j < newlineCount; j++) {
-                    sb.append(Constants.NEWLINE);
-                    sb.append(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
+                    sb.appendAndReset(NEWLINE);
+                    sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
                 }
             } else {
                 applyStyles(token, sb);
             }
         }
 
-        return sb.get();
+        return sb.toString();
     }
 
     void applyStyles(Token token, StyleBuilder sb) {
@@ -73,17 +74,17 @@ public class GoSyntaxHighlighter extends AbstractSyntaxHighlighter {
         }
 
         if (isWhitespace(type)) {
-            sb.append(text);
+            sb.appendAndReset(text);
         } else if (isComment(type)) {
-            sb.append(text, theme.comment());
+            sb.appendAndReset(text, theme.comment());
         } else if (isString(type)) {
-            sb.append(text, theme.stringLiteral());
+            sb.appendAndReset(text, theme.stringLiteral());
         } else if (isNumber(type)) {
-            sb.append(text, theme.numberLiteral());
+            sb.appendAndReset(text, theme.numberLiteral());
         } else if (isKeyword(type)) {
-            sb.append(text, theme.keyword());
+            sb.appendAndReset(text, theme.keyword());
         } else if (!isEOF(type)){
-            sb.append(text);
+            sb.appendAndReset(text);
         }
     }
 

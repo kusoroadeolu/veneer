@@ -1,6 +1,6 @@
 package io.github.kusoroadeolu.veneer;
 
-import io.github.kusoroadeolu.clique.parser.AnsiStringParser;
+import io.github.kusoroadeolu.clique.parser.MarkupParser;
 import io.github.kusoroadeolu.veneer.theme.SyntaxThemes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class LuaSyntaxHighlighterTest {
             end
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.keyword().ansiSequence()));
     }
 
     @Test
@@ -34,7 +34,7 @@ class LuaSyntaxHighlighterTest {
             local msg = "hello world"
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -43,7 +43,7 @@ class LuaSyntaxHighlighterTest {
             local msg = 'hello world'
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -52,7 +52,7 @@ class LuaSyntaxHighlighterTest {
             local msg = [[hello world]]
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.stringLiteral().ansiSequence()));
     }
 
     @Test
@@ -64,7 +64,7 @@ class LuaSyntaxHighlighterTest {
             local d = 1.0e5
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.numberLiteral().ansiSequence()));
     }
 
     @Test
@@ -73,7 +73,7 @@ class LuaSyntaxHighlighterTest {
             -- this is a comment
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
@@ -84,7 +84,7 @@ class LuaSyntaxHighlighterTest {
                  comment ]]
             """;
         String styled = highlighter.highlight(snippet);
-        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(styled.contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 
     @Test
@@ -103,7 +103,7 @@ class LuaSyntaxHighlighterTest {
             local c = 3
             """;
         var lineHighlighter = new LuaSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
@@ -119,12 +119,12 @@ class LuaSyntaxHighlighterTest {
             local x = 1
             """;
         var lineHighlighter = new LuaSyntaxHighlighter();
-        String styled = AnsiStringParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
+        String styled = MarkupParser.DEFAULT.getOriginalString(lineHighlighter.highlight(snippet));
         List<String> lines = styled.lines().toList();
         assertTrue(lines.getFirst().contains("1"));
         assertTrue(lines.get(1).contains("2"));
         assertTrue(lines.get(2).contains("3"));
         assertTrue(lines.get(3).contains("4"));
-        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.comment().toString()));
+        assertTrue(lineHighlighter.highlight(snippet).contains(SyntaxThemes.DEFAULT.comment().ansiSequence()));
     }
 }
