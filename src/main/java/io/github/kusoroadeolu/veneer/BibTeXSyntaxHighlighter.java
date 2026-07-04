@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.kusoroadeolu.veneer.BibTeXLexer.*;
@@ -16,6 +17,23 @@ import static io.github.kusoroadeolu.veneer.utils.Utils.isNullOrBlank;
 import static io.github.kusoroadeolu.veneer.utils.Utils.styleMultiLineToken;
 
 public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
+
+    public enum BibTeXTokenCategory {
+        KEYWORD,
+        STRING,
+        NUMBER,
+        COMMENT,
+        CITE_KEY,
+        FIELD_NAME,
+        MACRO,
+        DEFAULT
+    }
+
+    public record BibTeXHighlightRegion(
+            int start,
+            int end,
+            BibTeXTokenCategory category
+    ) {}
 
     public BibTeXSyntaxHighlighter() { super(); }
     public BibTeXSyntaxHighlighter(boolean showLineNumbers) { super(showLineNumbers); }
@@ -36,7 +54,53 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         return sb.toString();
     }
 
-    void applyWithLines(StyleBuilder sb, BufferedTokenStream tokenStream) {
+    /**
+     * Computes highlight regions (start/end offsets + category) without producing
+     * ANSI-styled output. Useful for consumers (e.g. GUI text editors) that need
+     * to apply their own styling mechanism (CSS classes, text attributes, etc.)
+     * instead of ANSI escape codes.
+     *
+     * @param s the BibTeX source to analyze
+     * @return a list of non-overlapping highlight regions covering the source,
+     *         ordered by their start offset
+     */
+    public List<BibTeXHighlightRegion> computeHighlightRegions(String s) {
+        List<BibTeXHighlightRegion> regions = new ArrayList<>();
+        if (isNullOrBlank(s)) return regions;
+
+        io.github.kusoroadeolu.veneer.BibTeXLexer lexer = new io.github.kusoroadeolu.veneer.BibTeXLexer(CharStreams.fromString(s));
+        BufferedTokenStream tokenStream = Utils.toBufferedTokenStream(lexer);
+        List<Token> tokens = tokenStream.getTokens();
+
+        for (int i = 0; i < tokens.size(); i++) {
+            Token token = tokens.get(i);
+            if (token.getType() == Token.EOF) continue;
+
+            int start = token.getStartIndex();
+            int end = token.getStopIndex() + 1;
+            if (start < 0 || end <= start) continue;
+
+            BibTeXTokenCategory category = classify(token, tokens, i);
+            if (category != BibTeXTokenCategory.DEFAULT) {
+                regions.add(new BibTeXHighlightRegion(start, end, category));
+            }
+        }
+
+        return regions;
+    }
+
+    private BibTeXTokenCategory classify(Token token, List<Token> tokens, int index) {
+        if (isComment(token)) return BibTeXTokenCategory.COMMENT;
+        if (isKeyword(token)) return BibTeXTokenCategory.KEYWORD;
+        if (isBraceString(token) || isString(token)) return BibTeXTokenCategory.STRING;
+        if (isNumber(token)) return BibTeXTokenCategory.NUMBER;
+        if (isCiteKey(token, tokens, index)) return BibTeXTokenCategory.CITE_KEY;
+        if (isFieldName(token, tokens, index)) return BibTeXTokenCategory.FIELD_NAME;
+        if (isName(token)) return BibTeXTokenCategory.MACRO;
+        return BibTeXTokenCategory.DEFAULT;
+    }
+
+    private void applyWithLines(StyleBuilder sb, BufferedTokenStream tokenStream) {
         List<Token> tokens = tokenStream.getTokens();
         int[] lineNumber = new int[1];
         sb.appendAndReset(Utils.formatNoTo3dp(++lineNumber[0]), theme.gutter());
@@ -57,14 +121,14 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         }
     }
 
-    void applyWithoutLines(StyleBuilder sb, BufferedTokenStream tokenStream) {
+    private void applyWithoutLines(StyleBuilder sb, BufferedTokenStream tokenStream) {
         List<Token> tokens = tokenStream.getTokens();
         for (int i = 0; i < tokens.size(); i++) {
             applyStyles(tokens.get(i), sb, tokens, i);
         }
     }
 
-    void applyStyles(Token token, StyleBuilder sb, List<Token> tokens, int index) {
+    private void applyStyles(Token token, StyleBuilder sb, List<Token> tokens, int index) {
         if (token.getType() == Token.EOF) return;
 
         String text = token.getText();
@@ -90,7 +154,7 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         }
     }
 
-    void appendCiteKey(String text, StyleBuilder sb) {
+    private void appendCiteKey(String text, StyleBuilder sb) {
         int colonIndex = text.indexOf(':');
 
         if (colonIndex < 0) {
@@ -109,40 +173,40 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         );
     }
 
-    boolean isKeyword(Token token) {
+    private boolean isKeyword(Token token) {
         int type = token.getType();
         return type == AT_STRING || type == AT_PREAMBLE || type == AT_COMMENT || type == AT_ENTRY;
     }
 
-    boolean isString(Token token) {
+    private boolean isString(Token token) {
         int type = token.getType();
         return type == DQUOTE_STRING;
     }
 
-    boolean isBraceString(Token token) {
+    private boolean isBraceString(Token token) {
         return token.getType() == BRACE_STRING;
     }
 
-    boolean isNumber(Token token) {
+    private boolean isNumber(Token token) {
         return token.getType() == NUMBER;
     }
 
-    boolean isComment(Token token) {
+    private boolean isComment(Token token) {
         return token.getType() == LINE_COMMENT;
     }
 
-    boolean isName(Token token) {
+    private boolean isName(Token token) {
         return token.getType() == NAME_TOKEN;
     }
 
-    boolean isCiteKey(Token token, List<Token> tokens, int index) {
+    private boolean isCiteKey(Token token, List<Token> tokens, int index) {
         if (!isName(token)) return false;
 
         Token prev = previousDefaultToken(tokens, index);
         return prev != null && (prev.getType() == LBRACE || prev.getType() == LPAREN);
     }
 
-    boolean isFieldName(Token token, List<Token> tokens, int index) {
+    private boolean isFieldName(Token token, List<Token> tokens, int index) {
         if (!isName(token)) return false;
         if (isCiteKey(token, tokens, index)) return false;
 
@@ -150,11 +214,11 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         return next != null && next.getType() == EQUALS;
     }
 
-    boolean isMultiLineToken(Token token) {
+    private boolean isMultiLineToken(Token token) {
         return token.getType() != Token.EOF && token.getText().contains(Constants.NEWLINE);
     }
 
-    void appendBraceString(String text, StyleBuilder sb) {
+    private void appendBraceString(String text, StyleBuilder sb) {
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
@@ -166,7 +230,7 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         }
     }
 
-    Token previousDefaultToken(List<Token> tokens, int index) {
+    private Token previousDefaultToken(List<Token> tokens, int index) {
         for (int i = index - 1; i >= 0; i--) {
             Token candidate = tokens.get(i);
             if (candidate.getType() == Token.EOF) continue;
@@ -175,7 +239,7 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         return null;
     }
 
-    Token nextDefaultToken(List<Token> tokens, int index) {
+    private Token nextDefaultToken(List<Token> tokens, int index) {
         for (int i = index + 1; i < tokens.size(); i++) {
             Token candidate = tokens.get(i);
             if (candidate.getType() == Token.EOF) continue;
