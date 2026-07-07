@@ -23,5 +23,9 @@
 
 - Encapsulated public method in xml highlighter
 
+## veneer [1.3.2] - 2026-07-07
+### Added
+- Utility methods in BibTeX highlighter to help classify tokens parsed by ANTLR
+
 
 

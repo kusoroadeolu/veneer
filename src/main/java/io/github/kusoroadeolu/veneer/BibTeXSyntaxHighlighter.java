@@ -173,40 +173,40 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         );
     }
 
-    private boolean isKeyword(Token token) {
+    boolean isKeyword(Token token) {
         int type = token.getType();
         return type == AT_STRING || type == AT_PREAMBLE || type == AT_COMMENT || type == AT_ENTRY;
     }
 
-    private boolean isString(Token token) {
+    boolean isString(Token token) {
         int type = token.getType();
         return type == DQUOTE_STRING;
     }
 
-    private boolean isBraceString(Token token) {
+    boolean isBraceString(Token token) {
         return token.getType() == BRACE_STRING;
     }
 
-    private boolean isNumber(Token token) {
+    boolean isNumber(Token token) {
         return token.getType() == NUMBER;
     }
 
-    private boolean isComment(Token token) {
+    boolean isComment(Token token) {
         return token.getType() == LINE_COMMENT;
     }
 
-    private boolean isName(Token token) {
+    boolean isName(Token token) {
         return token.getType() == NAME_TOKEN;
     }
 
-    private boolean isCiteKey(Token token, List<Token> tokens, int index) {
+    boolean isCiteKey(Token token, List<Token> tokens, int index) {
         if (!isName(token)) return false;
 
         Token prev = previousDefaultToken(tokens, index);
         return prev != null && (prev.getType() == LBRACE || prev.getType() == LPAREN);
     }
 
-    private boolean isFieldName(Token token, List<Token> tokens, int index) {
+    boolean isFieldName(Token token, List<Token> tokens, int index) {
         if (!isName(token)) return false;
         if (isCiteKey(token, tokens, index)) return false;
 
@@ -214,7 +214,7 @@ public class BibTeXSyntaxHighlighter extends AbstractSyntaxHighlighter {
         return next != null && next.getType() == EQUALS;
     }
 
-    private boolean isMultiLineToken(Token token) {
+    boolean isMultiLineToken(Token token) {
         return token.getType() != Token.EOF && token.getText().contains(Constants.NEWLINE);
     }
 
