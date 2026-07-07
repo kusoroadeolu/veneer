@@ -6,5 +6,4 @@ module veneer {
 
     exports io.github.kusoroadeolu.veneer;
     exports io.github.kusoroadeolu.veneer.theme;
-    exports io.github.kusoroadeolu.veneer.utils;
 }
