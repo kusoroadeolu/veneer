@@ -16,7 +16,7 @@ Syntax highlighting for Java, Python, Go, Lua, JavaScript, BibTeX, JSON, and XML
 <dependency>
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>veneer</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.3</version>
 </dependency>
 ```
 

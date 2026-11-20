@@ -6,7 +6,7 @@
 
     <groupId>io.github.kusoroadeolu</groupId>
     <artifactId>veneer</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.3</version>
     <packaging>jar</packaging>
 
     <name>veneer</name>
@@ -33,17 +33,20 @@
         </developer>
     </developers>
 
-    <scm>
+    <scm child.scm.connection.inherit.append.path="false"
+         child.scm.developerConnection.inherit.append.path="false"
+         child.scm.url.inherit.append.path="false">
         <connection>scm:git:git://github.com/kusoroadeolu/veneer.git</connection>
-        <developerConnection>scm:git:ssh://github.com:kusoroadeolu/veneer.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/kusoroadeolu/veneer.git</developerConnection>
         <url>https://github.com/kusoroadeolu/veneer</url>
+        <tag>v1.3.3</tag>
     </scm>
 
     <dependencies>
         <dependency>
             <groupId>io.github.kusoroadeolu</groupId>
             <artifactId>clique-core</artifactId>
-            <version>4.0.2</version>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.javaparser</groupId>
